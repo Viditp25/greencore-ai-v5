@@ -1,52 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-const useLerpedValue = (targetValue, dampening = 0.05) => {
-  const [current, setCurrent] = useState(targetValue || 0);
-  const currentRef = useRef(targetValue || 0);
-  const rafRef = useRef(null);
-  const hasInit = useRef(false);
-
-  useEffect(() => {
-    if (targetValue === undefined || targetValue === null) return;
-    
-    if (!hasInit.current) {
-      currentRef.current = targetValue;
-      setCurrent(targetValue);
-      hasInit.current = true;
-      return;
-    }
-
-    const tick = () => {
-      currentRef.current += (targetValue - currentRef.current) * dampening;
-      setCurrent(currentRef.current);
-      
-      if (Math.abs(targetValue - currentRef.current) > 0.1) {
-        rafRef.current = requestAnimationFrame(tick);
-      } else {
-        currentRef.current = targetValue;
-        setCurrent(targetValue);
-      }
-    };
-
-    if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    rafRef.current = requestAnimationFrame(tick);
-
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    };
-  }, [targetValue, dampening]);
-
-  return current;
-};
+// Removed useLerpedValue hook to enforce strict 5-second snapping
 
 const ServerDetailsPanel = ({ server }) => {
   const [showRaw, setShowRaw] = useState(false);
 
-  const lerpedCpu = useLerpedValue(server?.cpu);
-  const lerpedGpu = useLerpedValue(server?.gpu_usage);
-  const lerpedTemp = useLerpedValue(server?.temp);
-  const lerpedFan = useLerpedValue(server?.fan_rpm);
-  const lerpedPower = useLerpedValue(server?.power);
+  const safeCpu = server?.cpu || 0;
+  const safeGpu = server?.gpu_usage || 0;
+  const safeTemp = server?.temp || 0;
+  const safeFan = server?.fan_rpm || 0;
+  const safePower = server?.power || 0;
 
   return (
     <div className={`server-sidebar glass-panel ${server ? 'sidebar-visible' : ''}`}>
@@ -83,21 +46,21 @@ const ServerDetailsPanel = ({ server }) => {
             <div className="sidebar-grid">
               <div className="sidebar-item">
                 <span className="sidebar-label">CPU Compute</span>
-                <span className="sidebar-val">{lerpedCpu.toFixed(0)}%</span>
+                <span className="sidebar-val">{safeCpu.toFixed(0)}%</span>
               </div>
               <div className="sidebar-item">
                 <span className="sidebar-label">GPU Workload</span>
-                <span className="sidebar-val">{lerpedGpu.toFixed(0)}%</span>
+                <span className="sidebar-val">{safeGpu.toFixed(0)}%</span>
               </div>
               <div className="sidebar-item">
                 <span className="sidebar-label">Thermal Index</span>
                 <span className="sidebar-val" style={{ color: server.temp > 70 ? 'var(--neon-red)' : 'var(--text-primary)'}}>
-                  {lerpedTemp.toFixed(1)}°C
+                  {safeTemp.toFixed(1)}°C
                 </span>
               </div>
               <div className="sidebar-item">
                 <span className="sidebar-label">Exhaust Fan</span>
-                <span className="sidebar-val">{(Math.round(lerpedFan / 10) * 10).toFixed(0)} RPM</span>
+                <span className="sidebar-val">{(Math.round(safeFan / 10) * 10).toFixed(0)} RPM</span>
               </div>
               <div className="sidebar-item" style={{ gridColumn: 'span 2' }}>
                 <span className="sidebar-label">Active Workload</span>
@@ -105,7 +68,7 @@ const ServerDetailsPanel = ({ server }) => {
               </div>
               <div className="sidebar-item" style={{ gridColumn: 'span 2' }}>
                 <span className="sidebar-label">Energy Draw</span>
-                <span className="sidebar-val" style={{ color: 'var(--neon-green)'}}>{lerpedPower.toFixed(0)}W</span>
+                <span className="sidebar-val" style={{ color: 'var(--neon-green)'}}>{safePower.toFixed(0)}W</span>
               </div>
             </div>
           )}
