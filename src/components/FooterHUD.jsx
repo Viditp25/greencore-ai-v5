@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import AnimatedNumber from './AnimatedNumber';
 
 const FooterHUD = ({ servers, acSystem }) => {
   // Only tracked state is the highlighted server IDs (changes rarely due to hysteresis)
@@ -74,7 +73,7 @@ const FooterHUD = ({ servers, acSystem }) => {
           {servers.map(srv => (
             <div key={srv.id} className={`stat-item ${srv.id === maxIds.temp ? 'max-temp' : ''}`}>
               <span className="stat-label">{srv.id}</span>
-              <span className="stat-value"><AnimatedNumber value={srv.temp} suffix="°C" /></span>
+              <span className="stat-value">{srv.temp.toFixed(1)}°C</span>
             </div>
           ))}
         </div>
@@ -87,7 +86,7 @@ const FooterHUD = ({ servers, acSystem }) => {
           {servers.map(srv => (
             <div key={srv.id} className={`stat-item ${srv.id === maxIds.cpu ? 'max-cpu' : ''}`}>
               <span className="stat-label">{srv.id}</span>
-              <span className="stat-value"><AnimatedNumber value={srv.cpu} suffix="%" /></span>
+              <span className="stat-value">{srv.cpu.toFixed(0)}%</span>
             </div>
           ))}
         </div>
@@ -100,7 +99,7 @@ const FooterHUD = ({ servers, acSystem }) => {
           {servers.map(srv => (
             <div key={srv.id} className={`stat-item ${srv.id === maxIds.gpu ? 'max-gpu' : ''}`}>
               <span className="stat-label">{srv.id}</span>
-              <span className="stat-value"><AnimatedNumber value={srv.gpu_usage} suffix="%" /></span>
+              <span className="stat-value">{srv.gpu_usage.toFixed(0)}%</span>
             </div>
           ))}
         </div>
@@ -112,11 +111,11 @@ const FooterHUD = ({ servers, acSystem }) => {
         <div className="hud-content" style={{ flexDirection: 'column', gap: '4px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
             <span className="stat-label">VZG Ambient:</span>
-            <span className="stat-value"><AnimatedNumber value={acSystem.vzg_ambient_c} suffix="°C" /></span>
+            <span className="stat-value">{acSystem.vzg_ambient_c.toFixed(1)}°C</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
             <span className="stat-label">Chiller Load:</span>
-            <span className="stat-value" style={{ color: 'var(--neon-blue)' }}><AnimatedNumber value={acSystem.chiller_load} suffix="%" /></span>
+            <span className="stat-value" style={{ color: 'var(--neon-blue)' }}>{acSystem.chiller_load.toFixed(0)}%</span>
           </div>
         </div>
       </div>
