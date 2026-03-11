@@ -62,18 +62,27 @@ app.get('/metrics', async (req, res) => {
       let currentTemp = s.temp;
 
       // Only apply random fluctuations if manualOverride is not true for RPM/State
-      if (!s.manualOverride) {
+      // V10.0 Updated Logic: Slower, more deliberate deviations (25% chance to deviate per request)
+      if (!s.manualOverride && Math.random() < 0.25) {
         if (s.mode === 'compute') {
-          currentCpu = Math.max(70, Math.min(100, currentCpu + rand(-2, 2)));
-          currentGpu = Math.max(65, Math.min(100, currentGpu + rand(-2, 2)));
-          currentTemp = Math.max(75, Math.min(95, currentTemp + rand(-1, 1))); 
-          currentRpm = Math.max(3800, Math.min(4800, currentRpm + rand(-50, 50)));
+          currentCpu = Math.max(70, Math.min(100, currentCpu + rand(-3, 3)));
+          currentGpu = Math.max(65, Math.min(100, currentGpu + rand(-4, 4)));
+          currentTemp = Math.max(75, Math.min(95, currentTemp + rand(-2, 2))); 
+          currentRpm = Math.max(3800, Math.min(4800, currentRpm + rand(-150, 150)));
         } else {
-          currentCpu = Math.max(5, Math.min(35, currentCpu + rand(-1, 2)));
-          currentGpu = Math.max(0, Math.min(15, currentGpu + rand(-1, 1)));
-          currentTemp = Math.max(35, Math.min(55, currentTemp + rand(-1, 1)));
-          currentRpm = Math.max(1200, Math.min(2200, currentRpm + rand(-20, 20)));
+          currentCpu = Math.max(5, Math.min(35, currentCpu + rand(-2, 2)));
+          currentGpu = Math.max(0, Math.min(15, currentGpu + rand(-2, 2)));
+          currentTemp = Math.max(35, Math.min(55, currentTemp + rand(-2, 2)));
+          currentRpm = Math.max(1200, Math.min(2200, currentRpm + rand(-50, 50)));
         }
+        
+        // Save the micro-fluctuations back to Firebase ONLY if they actually changed
+        await db.ref(`serverStates/${i}`).update({
+          cpu: currentCpu,
+          gpu: currentGpu,
+          temp: currentTemp,
+          rpm: currentRpm
+        });
       }
 
       let workloadLabel = s.mode === 'compute' ? 'Model Training' : 'Idle / Inference';
@@ -86,15 +95,7 @@ app.get('/metrics', async (req, res) => {
           currentTemp = Math.max(60, Math.min(80, currentTemp + rand(-2, 2))); // Example thermal shift
       }
 
-      // Save the micro-fluctuations back to Firebase so they persist across requests
-      if (!s.manualOverride) {
-        await db.ref(`serverStates/${i}`).update({
-          cpu: currentCpu,
-          gpu: currentGpu,
-          temp: currentTemp,
-          rpm: currentRpm
-        });
-      }
+      // (Micro-fluctuations are now saved inside the 25% chance block above)
 
       servers.push({
         id: sId,
