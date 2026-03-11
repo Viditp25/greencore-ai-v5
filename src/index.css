@@ -187,3 +187,51 @@ body, html, #root {
   70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(255, 51, 102, 0); }
   100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 51, 102, 0); }
 }
+
+/* --- Floating Server Dialog --- */
+.server-floating-dialog {
+  width: 220px;
+  padding: 12px;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  color: white;
+  pointer-events: none;
+}
+
+.floating-header {
+  font-size: 1rem;
+  font-weight: 700;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.floating-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 8px;
+}
+
+.floating-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.floating-label {
+  font-size: 0.6rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.floating-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
