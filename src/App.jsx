@@ -40,8 +40,8 @@ function App() {
   useEffect(() => {
     // Initial fetch
     fetchData();
-    // Poll every 2 seconds to match the 2-second animation
-    const interval = setInterval(fetchData, 2000);
+    // Poll every 5 seconds to match the slower animation
+    const interval = setInterval(fetchData, 5000);
     return () => clearInterval(interval);
   }, [selectedServer]); // Added dependency to keep interval closure fresh with selectedServer
 
