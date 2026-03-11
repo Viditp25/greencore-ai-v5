@@ -7,7 +7,7 @@ const AnimatedNumber = ({ value, suffix = '', decimals = 0 }) => {
   const fromRef    = useRef(display);
   const targetRef  = useRef(display);
   const startTsRef = useRef(null);
-  const DURATION   = 2000; // ms (Takes exactly 2 seconds to change the number smoothly)
+  const DURATION   = 4000; // ms (Takes exactly 4 seconds to change the number smoothly)
 
   useEffect(() => {
     const numericVal = typeof value === 'number' && isFinite(value) ? value : 0;
