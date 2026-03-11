@@ -35,36 +35,36 @@ const ServerBlock = ({ position, data }) => {
   return (
     <group position={position}>
       {/* Floating HTML Dialog */}
-      <Html position={[0, 4, 0]} center className="server-floating-dialog">
+      <Html position={[0, 4.5, 0]} center distanceFactor={15} className="server-floating-dialog">
         <div className="floating-header">
           <span>{data.id}</span>
           <div className={`status-indicator ${data.temp > 70 ? 'status-red' : 'status-green'}`}></div>
         </div>
         <div className="floating-grid">
           <div className="floating-item">
-            <span className="floating-label">CPU Compute</span>
+            <span className="floating-label">CPU</span>
             <span className="floating-val">{safeCpu.toFixed(0)}%</span>
           </div>
           <div className="floating-item">
-            <span className="floating-label">GPU Workload</span>
+            <span className="floating-label">GPU</span>
             <span className="floating-val">{safeGpu.toFixed(0)}%</span>
           </div>
           <div className="floating-item">
-            <span className="floating-label">Thermal Index</span>
+            <span className="floating-label">Temp</span>
             <span className="floating-val" style={{ color: data.temp > 70 ? 'var(--neon-red)' : 'var(--text-primary)'}}>
               {safeTemp.toFixed(1)}°C
             </span>
           </div>
           <div className="floating-item">
-            <span className="floating-label">Exhaust Fan</span>
+            <span className="floating-label">Fan</span>
             <span className="floating-val">{(Math.round(safeFan / 10) * 10).toFixed(0)} RPM</span>
           </div>
           <div className="floating-item" style={{ gridColumn: 'span 2' }}>
-            <span className="floating-label">Active Workload</span>
+            <span className="floating-label">Task</span>
             <span className="floating-val">{data.workload}</span>
           </div>
           <div className="floating-item" style={{ gridColumn: 'span 2' }}>
-            <span className="floating-label">Energy Draw</span>
+            <span className="floating-label">Power</span>
             <span className="floating-val" style={{ color: 'var(--neon-green)'}}>{safePower.toFixed(0)}W</span>
           </div>
         </div>
