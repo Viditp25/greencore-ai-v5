@@ -131,6 +131,40 @@ app.get('/metrics', async (req, res) => {
   }
 });
 
+// GET /api/live (Dedicated Flutter Handshake Endpoint)
+app.get('/api/live', async (req, res) => {
+  try {
+    const ref = db.ref('serverStates');
+    const snapshot = await ref.once('value');
+    let dbStates = snapshot.val();
+
+    if (!dbStates) {
+      dbStates = initialServerStates;
+    }
+
+    const flutterServers = [];
+    for (let i = 1; i <= 6; i++) {
+       const s = dbStates[i] || initialServerStates[i];
+       
+       // Calculate a numeric workload value
+       const numericWorkload = s.mode === 'compute' ? Math.round((s.cpu + s.gpu) / 2) : rand(5, 15);
+       
+       flutterServers.push({
+         id: `s${i}`, // Mobile expects 's1', 's2', etc.
+         cpu: s.cpu,
+         temp: s.temp,
+         fan: s.rpm,
+         workload: numericWorkload
+       });
+    }
+
+    res.json({ servers: flutterServers });
+  } catch (err) {
+    console.error("Flutter API Error:", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 // POST /server/fan
 app.post('/server/fan', async (req, res) => {
     const { id, rpm } = req.body;
