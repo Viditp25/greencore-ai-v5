@@ -74,7 +74,9 @@ const FooterHUD = ({ servers, acSystem }) => {
           {servers.map(srv => (
             <div key={srv.id} className={`stat-item ${srv.id === maxIds.temp ? 'max-temp' : ''}`}>
               <span className="stat-label">{srv.id}</span>
-              <span className="stat-value"><AnimatedNumber value={srv.temp} suffix="°C" decimals={1} /></span>
+              <span className="stat-value" style={{ color: srv.temp > 70 ? 'var(--neon-red)' : 'inherit' }}>
+                <AnimatedNumber value={srv.temp} suffix="°C" decimals={1} />
+              </span>
             </div>
           ))}
         </div>

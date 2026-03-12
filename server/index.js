@@ -55,6 +55,15 @@ app.get('/metrics', async (req, res) => {
     for (let i = 1; i <= 6; i++) {
       const sId = `SRV-0${i}`;
       const s = dbStates[i] || initialServerStates[i];
+      
+      // V10.2: Predictive Load Rotation (20s Cycle)
+      // We calculate a global cycle index (0-5) based on time
+      const cycleIndex = Math.floor(Date.now() / 20000) % 6;
+      // We pick two servers to be in compute mode: the one at cycleIndex and the one opposite it (+3)
+      const isComputeCycle = (i - 1) === cycleIndex || (i - 1) === ((cycleIndex + 3) % 6);
+      
+      let effectiveMode = s.manualOverride ? s.mode : (isComputeCycle ? 'compute' : 'idle');
+      
       let currentRpm = s.rpm;
       let currentState = s.state;
       let currentCpu = s.cpu;
@@ -62,9 +71,8 @@ app.get('/metrics', async (req, res) => {
       let currentTemp = s.temp;
 
       // Only apply random fluctuations if manualOverride is not true for RPM/State
-      // V10.0 Updated Logic: Slower, more deliberate deviations (25% chance to deviate per request)
       if (!s.manualOverride && Math.random() < 0.25) {
-        if (s.mode === 'compute') {
+        if (effectiveMode === 'compute') {
           currentCpu = Math.max(70, Math.min(100, currentCpu + rand(-3, 3)));
           currentGpu = Math.max(65, Math.min(100, currentGpu + rand(-4, 4)));
           currentTemp = Math.max(75, Math.min(95, currentTemp + rand(-2, 2))); 
@@ -85,8 +93,8 @@ app.get('/metrics', async (req, res) => {
         });
       }
 
-      let workloadLabel = s.mode === 'compute' ? 'Model Training' : 'Idle / Inference';
-      let currentPower = s.mode === 'compute' ? rand(480, 520) : rand(180, 210);
+      let workloadLabel = effectiveMode === 'compute' ? 'Model Training' : 'Idle / Inference';
+      let currentPower = effectiveMode === 'compute' ? rand(480, 520) : rand(180, 210);
 
       // Handle the migration state
       if (currentState === 'migration') {
