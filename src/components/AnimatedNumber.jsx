@@ -7,7 +7,7 @@ const AnimatedNumber = ({ value, suffix = '', decimals = 0 }) => {
   const fromRef    = useRef(display);
   const targetRef  = useRef(display);
   const startTsRef = useRef(null);
-  const DURATION   = 400; // ms (Snaps quickly to new value, then stays static and legible)
+  const DURATION   = 5000; // ms (Smooth 5-second glide to match polling)
 
   useEffect(() => {
     const numericVal = typeof value === 'number' && isFinite(value) ? value : 0;

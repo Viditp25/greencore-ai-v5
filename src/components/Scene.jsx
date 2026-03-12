@@ -6,7 +6,7 @@ import ServerBlock from './ServerBlock';
 import CRACTower from './CRACTower';
 import AirflowParticles from './AirflowParticles';
 
-const Scene = ({ servers }) => {
+const Scene = ({ servers, onSelectServer }) => {
     // Alibaba-trace hour simulate: Day/night dimming based on current machine time.
     // 12PM = Max Light (1), 12AM = Min Light (0.1)
     const hour = new Date().getHours();
@@ -47,7 +47,7 @@ const Scene = ({ servers }) => {
             
             {/* 6 Server Blocks */}
             {servers && servers.map((srv, i) => (
-                <ServerBlock key={srv.id} position={serverPositions[i]} data={srv} />
+                <ServerBlock key={srv.id} position={serverPositions[i]} data={srv} onClick={onSelectServer} />
             ))}
 
             {/* 2 CRAC Towers */}
